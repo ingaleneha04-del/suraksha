@@ -1,0 +1,47 @@
+{
+  "name": "Suraksha Safety Dashboard",
+  "short_name": "Suraksha",
+  "description": "Emergency safety app with SOS, location tracking, and contacts.",
+  "start_url": "/home/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff4fa7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["safety", "emergency"],
+  "lang": "en-US",
+  "shortcuts": [
+    {
+      "name": "SOS",
+      "short_name": "SOS",
+      "description": "Trigger emergency SOS",
+      "url": "/home/#sos",
+      "icons": [
+        {
+          "src": "/static/icons/icon-512x512.png",
+          "sizes": "512x512"
+        }
+      ]
+    }
+  ]
+}

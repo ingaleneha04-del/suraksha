@@ -1,0 +1,304 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Home Dashboard</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ff4fa7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Suraksha">
+    <link rel="apple-touch-icon" href="/static/icon-512x512.png">
+<link rel="icon" href="/static/icon-192x192.png">
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5), 0 0 20px rgba(255, 105, 180, 0.3);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.7), 0 0 30px rgba(255, 105, 180, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .sos-button {
+            background: rgb(201, 172, 172);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .sos-button:hover {
+            background: darkred;
+        }
+
+        .stop-sos-button {
+            background: orange;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .logout-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #555;
+        }
+
+        #gps-display {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        #map {
+            height: 200px;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, textarea, button {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button[type="submit"] {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background: #218838;
+        }
+
+        .section-link {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 14px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .section-link:hover {
+            background: #0056b3;
+        }
+
+        /* Info page */
+        #info-section {
+            max-width: 900px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        #info-section .card {
+            position: relative;
+        }
+
+        .info-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .back-home-btn,
+        .close-info-btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .back-home-btn {
+            background: #28a745;
+        }
+
+        .back-home-btn:hover {
+            background: #218838;
+        }
+
+        .close-info-btn {
+            background: #dc3545;
+        }
+
+        .close-info-btn:hover {
+            background: #b52a37;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+    <h1>Home Dashboard</h1>
+
+    <!-- MAIN DASHBOARD -->
+    <div class="dashboard" id="main-dashboard">
+
+        <!-- Emergency SOS Button -->
+        <div class="card">
+            <h2>Emergency SOS</h2>
+            <p>Press in case of emergency. This will alert, play a repeating sound, and notify your emergency contact.</p>
+            <button id="sos-button" class="sos-button" type="button">Trigger SOS</button>
+            <button id="stop-sos-button" class="stop-sos-button" type="button" style="display:none;">Stop SOS</button>
+            <p id="sos-status"></p>
+        </div>
+
+        <!-- Live GPS Location Tracking -->
+        <div class="card">
+            <h2>Live GPS Location</h2>
+            <div id="map"></div>
+            <p id="gps-display">Fetching location...</p>
+            <button type="button" onclick="updateLocation()">Refresh Location</button>
+            <button id="share-whatsapp" type="button" onclick="shareLocationWhatsApp()">Share Location on WhatsApp</button>
+    
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="card">
+            <h2>Emergency Contact</h2>
+            <p>Add multiple emergency contact (name, phone, email).</p>
+            <div id="contacts-list"></div>
+
+            <form id="contact-form">
+                {% csrf_token %}
+                <input type="text" id="contact-name" placeholder="Name" required>
+                <input type="tel" id="contact-phone" placeholder="Phone Number (e.g., +1234567890)" required>
+                <input type="email" id="contact-email" placeholder="Email" required>
+                <button type="submit">Add Contact</button>
+            </form>
+
+            <p id="contact-status"></p>
+            <div id="saved-contact"></div>
+        </div>
+
+        <!-- Legal Help -->
+        <div class="card">
+            <h2>Legal Help</h2>
+            <p>Emergency helplines and women safety laws.</p>
+            <button class="section-link" type="button" onclick="openInfo('legal')">View Legal Help</button>
+        </div>
+
+        <!-- Support Community -->
+        <div class="card">
+            <h2>Support Community</h2>
+            <p>Helpful groups, helplines, and emotional support.</p>
+            <button class="section-link" type="button" onclick="openInfo('support')">View Support Community</button>
+        </div>
+
+        <!-- Safety Tips -->
+        <div class="card">
+            <h2>Safety Tips</h2>
+            <p>Personal safety, online safety, and emergency action tips.</p>
+            <button class="section-link" type="button" onclick="openInfo('safety')">View Safety Tips</button>
+        </div>
+
+        <!-- Report Complaint -->
+        <div class="card">
+            <h2>Report Complaint</h2>
+            <form id="complaint-form">
+                {% csrf_token %}
+                <input type="text" id="subject" placeholder="Subject" required>
+                <textarea id="description" placeholder="Description" required></textarea>
+                <button type="submit">Submit Report</button>
+            </form>
+            <p id="complaint-status"></p>
+        </div>
+
+        <!-- Technology Tools -->
+        <div class="card">
+            <h2>Technology Tools</h2>
+            <p>GPS, SOS features, PWA support, and future tools.</p>
+            <button class="section-link" type="button" onclick="openInfo('technology')">View Technology Tools</button>
+        </div>
+
+        <!-- Logout -->
+        <div class="card">
+            <h2>Account</h2>
+            <button class="logout-button" type="button" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- INFO VIEW PAGE -->
+    <div id="info-section">
+        <div class="card">
+            <h2 id="info-title"></h2>
+            <div id="info-content"></div>
+
+            <div class="info-actions">
+                <button id="back-home" class="back-home-btn" type="button">⬅ Back to Home</button>
+                <button id="close-info" class="close-info-btn" type="button">✖ Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'script.js' %}"></script>
+    <script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        
+}
+</script>
+</body>
+</html>

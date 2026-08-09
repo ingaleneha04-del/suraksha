@@ -1,0 +1,490 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Registration</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ff4fa7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Suraksha">
+   <link rel="apple-touch-icon" href="/static/icon-512x512.png">
+<link rel="icon" href="/static/icon-192x192.png">
+
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body{
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #5d264e, #8e4a73);
+        padding: 20px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    body::before,
+    body::after{
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: rgba(255, 183, 217, 0.15);
+        filter: blur(30px);
+        animation: floatGlow 8s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    body::before{
+        top: -80px;
+        left: -60px;
+    }
+
+    body::after{
+        bottom: -100px;
+        right: -80px;
+        animation-delay: 2s;
+    }
+
+    @keyframes floatGlow{
+        0%,100%{
+            transform: translateY(0) translateX(0) scale(1);
+        }
+        50%{
+            transform: translateY(20px) translateX(15px) scale(1.08);
+        }
+    }
+
+    .wrapper{
+        position: relative;
+        width: 900px;
+        max-width: 100%;
+        min-height: 640px;
+        border-radius: 20px;
+        overflow: hidden;
+        backdrop-filter: blur(15px);
+        background: rgba(255,255,255,0.08);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        display: flex;
+        z-index: 1;
+        animation: wrapperFade 1s ease;
+    }
+
+    @keyframes wrapperFade{
+        from{
+            opacity: 0;
+            transform: scale(0.96);
+        }
+        to{
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .form-box{
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        padding: 45px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all .6s ease;
+    }
+
+    .form-box form{
+        width: 100%;
+        max-width: 330px;
+        margin: 0 auto;
+        animation: formSlide .8s ease;
+    }
+
+    @keyframes formSlide{
+        from{
+            opacity: 0;
+            transform: translateY(25px);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-box.login{
+        left: 0;
+        top: 0;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .form-box.register{
+        left: 0;
+        top: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .wrapper.active .form-box.login{
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-20px);
+    }
+
+    .wrapper.active .form-box.register{
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+    .form-box h2{
+        font-size: 30px;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 18px;
+        animation: textPop .7s ease;
+    }
+
+    @keyframes textPop{
+        from{
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to{
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .input-box{
+        margin: 14px 0;
+        animation: fadeUp .8s ease;
+    }
+
+    @keyframes fadeUp{
+        from{
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .input-box label{
+        display: block;
+        color: rgba(255,255,255,.9);
+        font-size: 14px;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    .input-box input{
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 15px;
+        outline: none;
+        transition: all .3s ease;
+    }
+
+    .input-box input:focus{
+        border-color: #ffb7d9;
+        box-shadow: 0 0 0 3px rgba(255,183,217,0.12);
+        transform: scale(1.02);
+    }
+
+    .btn{
+        width: 100%;
+        height: 48px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg,#ff4fa7,#ff8ac9);
+        box-shadow: 0 8px 20px rgba(255,79,167,.4);
+        transition: .4s;
+        margin-top: 18px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:hover{
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(255,79,167,.6);
+    }
+
+    .btn::before{
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+        transition: .6s;
+    }
+
+    .btn:hover::before{
+        left: 100%;
+    }
+
+    .logreg-link{
+        text-align: center;
+        margin-top: 18px;
+        color: #fff;
+        font-size: 14px;
+        animation: fadeUp .9s ease;
+    }
+
+    .logreg-link a{
+        color: #ffb7d9;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        margin-left: 4px;
+        transition: .3s;
+    }
+
+    .logreg-link a:hover{
+        color: #fff;
+        text-shadow: 0 0 8px rgba(255,255,255,0.6);
+    }
+
+    .info-text{
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        padding: 60px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: #fff;
+        transition: .6s ease;
+    }
+
+    .info-text.login{
+        right: 0;
+        text-align: right;
+        opacity: 1;
+    }
+
+    .info-text.register{
+        right: 0;
+        text-align: right;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .wrapper.active .info-text.login{
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(20px);
+    }
+
+    .wrapper.active .info-text.register{
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+    .info-text h2{
+        font-size: 36px;
+        margin-bottom: 15px;
+        animation: textPop .8s ease;
+    }
+
+    .info-text p{
+        font-size: 16px;
+        opacity: .9;
+        line-height: 1.6;
+        animation: fadeUp 1s ease;
+    }
+
+    .error-message{
+        color: #ffe066;
+        background: rgba(0,0,0,0.15);
+        padding: 10px 14px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        text-align: center;
+        font-size: 14px;
+        animation: shakeIn .5s ease;
+    }
+
+    @keyframes shakeIn{
+        0%{ transform: translateX(-10px); opacity: 0; }
+        50%{ transform: translateX(8px); }
+        100%{ transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px){
+        body{
+            overflow: auto;
+        }
+
+        .wrapper{
+            min-height: auto;
+            display: block;
+        }
+
+        .form-box,
+        .info-text{
+            position: static;
+            width: 100%;
+            height: auto;
+            padding: 35px 25px;
+        }
+
+        .form-box form{
+            max-width: 100%;
+        }
+
+        .info-text{
+            display: none;
+        }
+
+        .form-box.login{
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .form-box.register{
+            display: none;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .wrapper.active .form-box.login{
+            display: none;
+        }
+
+        .wrapper.active .form-box.register{
+            display: flex;
+        }
+    }
+</style>
+<body>
+
+<div class="wrapper">
+    <!-- LOGIN FORM -->
+    <div class="form-box login">
+        <h2>Login</h2>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form id="login-form" action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+
+            <div class="input-box">
+                <label for="login-username">Email</label>
+                <input type="text" id="login-username" name="username" required>
+            </div>
+
+            <div class="input-box">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+
+            <div class="logreg-link">
+                <p>Don't have an account?
+                    <a href="#" class="register-link">Sign Up</a>
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- LOGIN INFO -->
+    <div class="info-text login">
+        <h2>Welcome Back!</h2>
+        <p>Your safety matters to us. Log in to stay connected with emergency support, trusted contacts, and real-time safety tools.</p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="form-box register">
+        <h2>Sign Up</h2>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form id="register-form" action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+
+            <div class="input-box">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="full_name" required>
+            </div>
+
+            <div class="input-box">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="input-box">
+                <label for="guardian-email">Guardian Email</label>
+                <input type="email" id="guardian-email" name="guardian_email" required>
+            </div>
+
+            <div class="input-box">
+                <label for="mobile-number">Mobile Number</label>
+                <input type="tel" id="mobile-number" name="mobile_number" required>
+            </div>
+
+            <div class="input-box">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Sign Up</button>
+
+            <div class="logreg-link">
+                <p>Already have an account?
+                    <a href="#" class="login-link">Login</a>
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- REGISTER INFO -->
+    <div class="info-text register">
+        <h2>Join Suraksha</h2>
+        <p>Create your account to stay protected with emergency alerts, live tracking, and trusted emergency contacts.</p>
+    </div>
+</div>
+
+<script src="{% static 'script.js' %}"></script>
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        
+}
+</script>
+</body>
+</html>
