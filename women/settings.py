@@ -25,8 +25,10 @@ SECRET_KEY = 'django-insecure-7_tgu-g09-^5udc_9_)a&jce!aq*z#a48zhdn9@tcp8u(&3un5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'localhost',]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','10.50.149.121','faucet-scrooge-maroon.ngrok-free.dev']
 
+CSRF_TRUSTED_ORIGINS = ['https://10.50.149.121:8000',
+                        'https://faucet-scrooge-maroon.ngrok-free.dev',]
 
 
 # Application definition
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'stud',
 ]
 

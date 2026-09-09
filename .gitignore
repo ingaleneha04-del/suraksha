@@ -1,0 +1,6 @@
+*.pyc
+__pycache__/
+*.pem
+mkcert.exe.exe
+db.sqlite3
+staticfiles/
